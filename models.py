@@ -22,6 +22,13 @@ class KillSwitch(db.Model):
     round_2 = db.Column(db.Boolean, default=False)
     round_3 = db.Column(db.Boolean, default=False)
 
+    round_1_start_time = db.Column(db.DateTime, nullable=True)
+    round_2_start_time = db.Column(db.DateTime, nullable=True)
+    round_3_start_time = db.Column(db.DateTime, nullable=True)
+    round_1_end_time = db.Column(db.DateTime, nullable=True)
+    round_2_end_time = db.Column(db.DateTime, nullable=True)
+    round_3_end_time = db.Column(db.DateTime, nullable=True)
+
 
 class Round1_Questions(db.Model):
     __tablename__ = 'round1_questions'

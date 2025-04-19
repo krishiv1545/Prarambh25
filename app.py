@@ -3,9 +3,11 @@ from models import db, User, KillSwitch, Round1_Questions, Round2_Questions, Sco
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
-from datetime import datetime, UTC
+from datetime import datetime, UTC, timedelta
 import os
 from sqlalchemy.exc import IntegrityError
+from threading import Thread
+import time
 
 
 load_dotenv()
@@ -46,6 +48,21 @@ with app.app_context():
     else:
         print("Admin user already exists")
 
+    status = KillSwitch.query.first()
+    if status and status.round_1 and status.round_1_start_time:
+        elapsed = datetime.now(UTC) - status.round_1_start_time
+        remaining = timedelta(minutes=1) - elapsed  # 20 minutes round time
+
+        if remaining.total_seconds() > 0:
+            # Restart timer with remaining time
+            time.sleep(remaining.total_seconds())
+            status.round_1 = False
+            db.session.commit()
+        else:
+            # Round should have already ended
+            status.round_1 = False
+            db.session.commit()
+
     # Check if killswitch exists
     if not KillSwitch.query.first():
         try:
@@ -59,6 +76,18 @@ with app.app_context():
             print("Killswitch already exists")
     else:
         print("Killswitch already exists")
+
+
+def end_round_1_after_delay():
+    def turn_off_round():
+        with app.app_context():
+            time.sleep(1 * 60)  # mins x 60
+
+            status = KillSwitch.query.first()
+            if status:
+                status.round_1 = False
+                db.session.commit()
+                print("Round 1 automatically ended")
 
 
 @app.route('/')
@@ -140,12 +169,10 @@ def round_1():
 
     status = KillSwitch.query.first()
     if status.round_1 == True:
-        return render_template('round_1.html')
+        return render_template('round1.html')
     else:
         flash('Round 1 is not active.', 'error')
         return redirect(url_for('dashboard'))
-
-    return redirect(url_for('dashboard'))
 
 
 @app.route('/admin-dashboard', methods=['GET', 'POST'])
@@ -223,6 +250,18 @@ def add_round2_question():
         db.session.add(new_question)
         db.session.commit()
         flash('Question added successfully.', 'success')
+    return redirect(url_for('admin_dashboard'))
+
+
+@app.route('/start-round-1', methods=['GET'])
+def start_round_1():
+    status = KillSwitch.query.first()
+    status.round_1 = True
+    status.round_1_start_time = datetime.now(UTC)
+    db.session.commit()
+
+    end_round_1_after_delay()
+
     return redirect(url_for('admin_dashboard'))
 
 
