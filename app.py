@@ -31,7 +31,7 @@ with app.app_context():
     if not User.query.filter_by(username=admin_username).first():
         try:
             new_user = User(
-                enrollmentno='231260107032',
+                enrollmentno='231260107017',
                 username=admin_username,
                 password=generate_password_hash(os.getenv('ADMIN_PASSWORD')),
                 role='admin',
