@@ -3,7 +3,117 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Dash</title>
+    <title>Admin Dashboard</title>
   </head>
-  <body></body>
+  <body>
+    <h1>Admin Dashboard</h1>
+    <div class="content">
+      <!-- Admin dashboard content goes here -->
+      <div class="round1">
+        <h2>Round 1</h2>
+        <p>Question in Round 1.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Question Id</th>
+              <th>Question</th>
+              <th>Option 1</th>
+              <th>Option 2</th>
+              <th>Option 3</th>
+              <th>Option 4</th>
+              <th>Correct Answer</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for question in round1_questions %}
+            <tr>
+              <td>{{ question.id }}</td>
+              <td>{{ question.question }}</td>
+              <td>{{ question.option1 }}</td>
+              <td>{{ question.option2 }}</td>
+              <td>{{ question.option3 }}</td>
+              <td>{{ question.option4 }}</td>
+              <td>{{ question.answer }}</td>
+              <td>
+                <a
+                  href="{{ url_for('delete_round1_question', question_id=question.id) }}"
+                  >Delete</a
+                >
+              </td>
+            </tr>
+
+            {% endfor %}
+          </tbody>
+        </table>
+        <form action="/add-round1-question" method="POST">
+          <input type="text" name="question" placeholder="Question" required />
+          <input type="text" name="option1" placeholder="Option 1" required />
+          <input type="text" name="option2" placeholder="Option 2" required />
+          <input type="text" name="option3" placeholder="Option 3" required />
+          <input type="text" name="option4" placeholder="Option 4" required />
+          <input
+            type="text"
+            name="answer"
+            placeholder="Correct Option"
+            required
+          />
+          <button type="submit">Add</button>
+        </form>
+      </div>
+
+      <div class="round2">
+        <h2>Round 2</h2>
+        <p>Question in Round 2.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Question Id</th>
+              <th>Question</th>
+              <th>Option 1</th>
+              <th>Option 2</th>
+              <th>Option 3</th>
+              <th>Option 4</th>
+              <th>Correct Answer</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for question in round2_questions %}
+            <tr>
+              <td>{{ question.id }}</td>
+              <td>{{ question.question }}</td>
+              <td>{{ question.option1 }}</td>
+              <td>{{ question.option2 }}</td>
+              <td>{{ question.option3 }}</td>
+              <td>{{ question.option4 }}</td>
+              <td>{{ question.answer }}</td>
+              <td>
+                <a
+                  href="{{ url_for('delete_round2_question', question_id=question.id) }}"
+                  >Delete</a
+                >
+              </td>
+            </tr>
+
+            {% endfor %}
+          </tbody>
+        </table>
+        <form action="/add-round2-question" method="POST">
+          <input type="text" name="question" placeholder="Question" required />
+          <input type="text" name="option1" placeholder="Option 1" required />
+          <input type="text" name="option2" placeholder="Option 2" required />
+          <input type="text" name="option3" placeholder="Option 3" required />
+          <input type="text" name="option4" placeholder="Option 4" required />
+          <input
+            type="text"
+            name="answer"
+            placeholder="Correct Option"
+            required
+          />
+          <button type="submit">Add</button>
+        </form>
+      </div>
+    </div>
+  </body>
 </html>

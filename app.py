@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-from models import db, User, KillSwitch
+from models import db, User, KillSwitch, Round1_Questions, Round2_Questions, Scores
+from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 from datetime import datetime, UTC
@@ -114,8 +115,12 @@ def login():
         if user and check_password_hash(user.password, password):
             session['user_id'] = user.id
             session['role'] = user.role
-            return redirect(url_for('dashboard'))
-        flash('Invalid username or password.', 'error')
+            if user.role == 'admin':
+                flash('Welcome Admin!', 'success')
+                return redirect(url_for('admin_dashboard'))
+            else:
+                flash('Welcome Participant!', 'success')
+                return redirect(url_for('dashboard'))
     return render_template('login.html')
 
 
@@ -140,6 +145,82 @@ def round_1():
         return redirect(url_for('dashboard'))
 
     return redirect(url_for('dashboard'))
+
+
+@app.route('/admin-dashboard', methods=['GET', 'POST'])
+def admin_dashboard():
+    if 'user_id' not in session or session['role'] != 'admin':
+        flash('Unauthorized access.', 'error')
+        return redirect(url_for('home'))
+
+    round1_questions = Round1_Questions.query.all()
+    round2_questions = Round2_Questions.query.all()
+
+    return render_template('admin_dashboard.html',
+                           round1_questions=round1_questions,
+                           round2_questions=round2_questions)
+
+
+@app.route('/delete-round1-question/<int:question_id>', methods=['GET'])
+def delete_round1_question(question_id):
+    question = Round1_Questions.query.get(question_id)
+    if question:
+        db.session.delete(question)
+        db.session.commit()
+        flash('Question deleted successfully.', 'success')
+    else:
+        flash('Question not found.', 'error')
+    return redirect(url_for('admin_dashboard'))
+
+
+@app.route('/delete-round2-question/<int:question_id>', methods=['GET'])
+def delete_round2_question(question_id):
+    question = Round2_Questions.query.get(question_id)
+    if question:
+        db.session.delete(question)
+        db.session.commit()
+        flash('Question deleted successfully.', 'success')
+    else:
+        flash('Question not found.', 'error')
+    return redirect(url_for('admin_dashboard'))
+
+
+@app.route('/add-round1-question', methods=['POST'])
+def add_round1_question():
+
+    if request.method == 'POST':
+        question = request.form['question']
+        option1 = request.form['option1']
+        option2 = request.form['option2']
+        option3 = request.form['option3']
+        option4 = request.form['option4']
+        answer = request.form['answer']
+
+        new_question = Round1_Questions(question=question, option1=option1,
+                                        option2=option2, option3=option3, option4=option4, answer=answer)
+        db.session.add(new_question)
+        db.session.commit()
+        flash('Question added successfully.', 'success')
+    return redirect(url_for('admin_dashboard'))
+
+
+@app.route('/add-round2-question', methods=['POST'])
+def add_round2_question():
+
+    if request.method == 'POST':
+        question = request.form['question']
+        option1 = request.form['option1']
+        option2 = request.form['option2']
+        option3 = request.form['option3']
+        option4 = request.form['option4']
+        answer = request.form['answer']
+
+        new_question = Round2_Questions(question=question, option1=option1,
+                                        option2=option2, option3=option3, option4=option4, answer=answer)
+        db.session.add(new_question)
+        db.session.commit()
+        flash('Question added successfully.', 'success')
+    return redirect(url_for('admin_dashboard'))
 
 
 if __name__ == '__main__':
