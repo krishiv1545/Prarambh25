@@ -11,6 +11,7 @@ class User(db.Model):
     username = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(256), nullable=False)
     role = db.Column(db.String(50), default='participant')
+    preferred_language = db.Column(db.String(50))
     datetime = db.Column(db.DateTime, default=lambda: datetime.now(UTC))
 
 
@@ -25,23 +26,29 @@ class KillSwitch(db.Model):
 class Round1_Questions(db.Model):
     __tablename__ = 'round1_questions'
     id = db.Column(db.Integer, primary_key=True)
-    question = db.Column(db.String(256), nullable=False)
+
+    python_question = db.Column(db.String(1024), nullable=False)
+    c_question = db.Column(db.String(1024), nullable=False)
+
     option1 = db.Column(db.String(256), nullable=False)
     option2 = db.Column(db.String(256), nullable=False)
     option3 = db.Column(db.String(256), nullable=False)
     option4 = db.Column(db.String(256), nullable=False)
-    answer = db.Column(db.String(256), nullable=False)
+    answer = db.Column(db.Integer, nullable=False)
 
 
 class Round2_Questions(db.Model):
     __tablename__ = 'round2_questions'
     id = db.Column(db.Integer, primary_key=True)
-    question = db.Column(db.String(256), nullable=False)
+
+    python_question = db.Column(db.String(1024), nullable=False)
+    c_question = db.Column(db.String(1024), nullable=False)
+
     option1 = db.Column(db.String(256), nullable=False)
     option2 = db.Column(db.String(256), nullable=False)
     option3 = db.Column(db.String(256), nullable=False)
     option4 = db.Column(db.String(256), nullable=False)
-    answer = db.Column(db.String(256), nullable=False)
+    answer = db.Column(db.Integer, nullable=False)
 
 
 class Scores(db.Model):

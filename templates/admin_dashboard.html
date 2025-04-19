@@ -16,7 +16,8 @@
           <thead>
             <tr>
               <th>Question Id</th>
-              <th>Question</th>
+              <th>Question in Python</th>
+              <th>Question in C</th>
               <th>Option 1</th>
               <th>Option 2</th>
               <th>Option 3</th>
@@ -29,7 +30,8 @@
             {% for question in round1_questions %}
             <tr>
               <td>{{ question.id }}</td>
-              <td>{{ question.question }}</td>
+              <td>{{ question.python_question }}</td>
+              <td>{{ question.c_question }}</td>
               <td>{{ question.option1 }}</td>
               <td>{{ question.option2 }}</td>
               <td>{{ question.option3 }}</td>
@@ -47,7 +49,18 @@
           </tbody>
         </table>
         <form action="/add-round1-question" method="POST">
-          <input type="text" name="question" placeholder="Question" required />
+          <input
+            type="text"
+            name="python_question"
+            placeholder="Question in Python"
+            required
+          />
+          <input
+            type="text"
+            name="c_question"
+            placeholder="Question in C"
+            required
+          />
           <input type="text" name="option1" placeholder="Option 1" required />
           <input type="text" name="option2" placeholder="Option 2" required />
           <input type="text" name="option3" placeholder="Option 3" required />
@@ -69,7 +82,8 @@
           <thead>
             <tr>
               <th>Question Id</th>
-              <th>Question</th>
+              <th>Question in Python</th>
+              <th>Question in C</th>
               <th>Option 1</th>
               <th>Option 2</th>
               <th>Option 3</th>
@@ -82,7 +96,8 @@
             {% for question in round2_questions %}
             <tr>
               <td>{{ question.id }}</td>
-              <td>{{ question.question }}</td>
+              <td>{{ question.python_question }}</td>
+              <td>{{ question.c_question }}</td>
               <td>{{ question.option1 }}</td>
               <td>{{ question.option2 }}</td>
               <td>{{ question.option3 }}</td>
@@ -100,7 +115,18 @@
           </tbody>
         </table>
         <form action="/add-round2-question" method="POST">
-          <input type="text" name="question" placeholder="Question" required />
+          <input
+            type="text"
+            name="python_question"
+            placeholder="Question in Python"
+            required
+          />
+          <input
+            type="text"
+            name="c_question"
+            placeholder="Question in C"
+            required
+          />
           <input type="text" name="option1" placeholder="Option 1" required />
           <input type="text" name="option2" placeholder="Option 2" required />
           <input type="text" name="option3" placeholder="Option 3" required />

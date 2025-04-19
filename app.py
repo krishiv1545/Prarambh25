@@ -74,11 +74,12 @@ def signup():
         enrollmentno = request.form['enrollmentno']
         username = request.form['username']
         password = request.form['password']
+        preferred_language = request.form['preferred_language']
         hashed_password = generate_password_hash(password)
 
         try:
             new_user = User(enrollmentno=enrollmentno, username=username,
-                            password=hashed_password)
+                            password=hashed_password, preferred_language=preferred_language)
             db.session.add(new_user)
             db.session.commit()
             flash('Signup successful! Please log in.', 'success')
@@ -189,14 +190,15 @@ def delete_round2_question(question_id):
 def add_round1_question():
 
     if request.method == 'POST':
-        question = request.form['question']
+        python_question = request.form['python_question']
+        c_question = request.form['c_question']
         option1 = request.form['option1']
         option2 = request.form['option2']
         option3 = request.form['option3']
         option4 = request.form['option4']
         answer = request.form['answer']
 
-        new_question = Round1_Questions(question=question, option1=option1,
+        new_question = Round1_Questions(python_question=python_question, c_question=c_question, option1=option1,
                                         option2=option2, option3=option3, option4=option4, answer=answer)
         db.session.add(new_question)
         db.session.commit()
@@ -208,14 +210,15 @@ def add_round1_question():
 def add_round2_question():
 
     if request.method == 'POST':
-        question = request.form['question']
+        python_question = request.form['python_question']
+        c_question = request.form['c_question']
         option1 = request.form['option1']
         option2 = request.form['option2']
         option3 = request.form['option3']
         option4 = request.form['option4']
         answer = request.form['answer']
 
-        new_question = Round2_Questions(question=question, option1=option1,
+        new_question = Round2_Questions(python_question=python_question, c_question=c_question, option1=option1,
                                         option2=option2, option3=option3, option4=option4, answer=answer)
         db.session.add(new_question)
         db.session.commit()
