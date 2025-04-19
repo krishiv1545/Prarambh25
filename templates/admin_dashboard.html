@@ -4,6 +4,32 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard</title>
+    <style>
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+      .modal-content {
+        background-color: white;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 50%;
+      }
+      .close {
+        float: right;
+        cursor: pointer;
+      }
+      .action-buttons {
+        display: flex;
+        gap: 10px;
+      }
+    </style>
   </head>
   <body>
     <h1>Admin Dashboard</h1>
@@ -38,39 +64,23 @@
               <td>{{ question.option4 }}</td>
               <td>{{ question.answer }}</td>
               <td>
-                <a
-                  href="{{ url_for('delete_round1_question', question_id=question.id) }}"
-                  >Delete</a
-                >
+                <div class="action-buttons">
+                  <button onclick="openEditModal('round1', {{ question.id }}, '{{ question.python_question }}', '{{ question.c_question }}', '{{ question.option1 }}', '{{ question.option2 }}', '{{ question.option3 }}', '{{ question.option4 }}', '{{ question.answer }}')">Edit</button>
+                  <a href="{{ url_for('delete_round1_question', question_id=question.id) }}">Delete</a>
+                </div>
               </td>
             </tr>
-
             {% endfor %}
           </tbody>
         </table>
         <form action="/add-round1-question" method="POST">
-          <input
-            type="text"
-            name="python_question"
-            placeholder="Question in Python"
-            required
-          />
-          <input
-            type="text"
-            name="c_question"
-            placeholder="Question in C"
-            required
-          />
+          <input type="text" name="python_question" placeholder="Question in Python" required />
+          <input type="text" name="c_question" placeholder="Question in C" required />
           <input type="text" name="option1" placeholder="Option 1" required />
           <input type="text" name="option2" placeholder="Option 2" required />
           <input type="text" name="option3" placeholder="Option 3" required />
           <input type="text" name="option4" placeholder="Option 4" required />
-          <input
-            type="text"
-            name="answer"
-            placeholder="Correct Option"
-            required
-          />
+          <input type="text" name="answer" placeholder="Correct Option" required />
           <button type="submit">Add</button>
         </form>
       </div>
@@ -104,42 +114,77 @@
               <td>{{ question.option4 }}</td>
               <td>{{ question.answer }}</td>
               <td>
-                <a
-                  href="{{ url_for('delete_round2_question', question_id=question.id) }}"
-                  >Delete</a
-                >
+                <div class="action-buttons">
+                  <button onclick="openEditModal('round2', {{ question.id }}, '{{ question.python_question }}', '{{ question.c_question }}', '{{ question.option1 }}', '{{ question.option2 }}', '{{ question.option3 }}', '{{ question.option4 }}', '{{ question.answer }}')">Edit</button>
+                  <a href="{{ url_for('delete_round2_question', question_id=question.id) }}">Delete</a>
+                </div>
               </td>
             </tr>
-
             {% endfor %}
           </tbody>
         </table>
         <form action="/add-round2-question" method="POST">
-          <input
-            type="text"
-            name="python_question"
-            placeholder="Question in Python"
-            required
-          />
-          <input
-            type="text"
-            name="c_question"
-            placeholder="Question in C"
-            required
-          />
+          <input type="text" name="python_question" placeholder="Question in Python" required />
+          <input type="text" name="c_question" placeholder="Question in C" required />
           <input type="text" name="option1" placeholder="Option 1" required />
           <input type="text" name="option2" placeholder="Option 2" required />
           <input type="text" name="option3" placeholder="Option 3" required />
           <input type="text" name="option4" placeholder="Option 4" required />
-          <input
-            type="text"
-            name="answer"
-            placeholder="Correct Option"
-            required
-          />
+          <input type="text" name="answer" placeholder="Correct Option" required />
           <button type="submit">Add</button>
         </form>
       </div>
     </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeEditModal()">&times;</span>
+        <form id="editForm" method="POST">
+          <input type="hidden" id="roundType" name="roundType">
+          <input type="hidden" id="questionId" name="questionId">
+          <input type="text" id="python_question" name="python_question" placeholder="Question in Python" required />
+          <input type="text" id="c_question" name="c_question" placeholder="Question in C" required />
+          <input type="text" id="option1" name="option1" placeholder="Option 1" required />
+          <input type="text" id="option2" name="option2" placeholder="Option 2" required />
+          <input type="text" id="option3" name="option3" placeholder="Option 3" required />
+          <input type="text" id="option4" name="option4" placeholder="Option 4" required />
+          <input type="text" id="answer" name="answer" placeholder="Correct Option" required />
+          <button type="submit">Save</button>
+          <button type="button" onclick="closeEditModal()">Close</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      function openEditModal(roundType, questionId, pythonQuestion, cQuestion, option1, option2, option3, option4, answer) {
+        document.getElementById('roundType').value = roundType;
+        document.getElementById('questionId').value = questionId;
+        document.getElementById('python_question').value = pythonQuestion;
+        document.getElementById('c_question').value = cQuestion;
+        document.getElementById('option1').value = option1;
+        document.getElementById('option2').value = option2;
+        document.getElementById('option3').value = option3;
+        document.getElementById('option4').value = option4;
+        document.getElementById('answer').value = answer;
+        
+        const form = document.getElementById('editForm');
+        form.action = `/edit-${roundType}-question/${questionId}`;
+        
+        document.getElementById('editModal').style.display = 'block';
+      }
+
+      function closeEditModal() {
+        document.getElementById('editModal').style.display = 'none';
+      }
+
+      // Close modal when clicking outside
+      window.onclick = function(event) {
+        const modal = document.getElementById('editModal');
+        if (event.target == modal) {
+          closeEditModal();
+        }
+      }
+    </script>
   </body>
 </html>
