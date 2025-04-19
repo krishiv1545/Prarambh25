@@ -253,6 +253,7 @@ def add_round2_question():
     return redirect(url_for('admin_dashboard'))
 
 
+<<<<<<< HEAD
 @app.route('/start-round-1', methods=['GET'])
 def start_round_1():
     status = KillSwitch.query.first()
@@ -262,6 +263,41 @@ def start_round_1():
 
     end_round_1_after_delay()
 
+=======
+@app.route('/edit-round1-question/<int:question_id>', methods=['POST'])
+def edit_round1_question(question_id):
+    question = Round1_Questions.query.get(question_id)
+    if question:
+        question.python_question = request.form['python_question']
+        question.c_question = request.form['c_question']
+        question.option1 = request.form['option1']
+        question.option2 = request.form['option2']
+        question.option3 = request.form['option3']
+        question.option4 = request.form['option4']
+        question.answer = request.form['answer']
+        db.session.commit()
+        flash('Question updated successfully.', 'success')
+    else:
+        flash('Question not found.', 'error')
+    return redirect(url_for('admin_dashboard'))
+
+
+@app.route('/edit-round2-question/<int:question_id>', methods=['POST'])
+def edit_round2_question(question_id):
+    question = Round2_Questions.query.get(question_id)
+    if question:
+        question.python_question = request.form['python_question']
+        question.c_question = request.form['c_question']
+        question.option1 = request.form['option1']
+        question.option2 = request.form['option2']
+        question.option3 = request.form['option3']
+        question.option4 = request.form['option4']
+        question.answer = request.form['answer']
+        db.session.commit()
+        flash('Question updated successfully.', 'success')
+    else:
+        flash('Question not found.', 'error')
+>>>>>>> 1c5850536c7508c13d256be461bc6f0dd6b3afb7
     return redirect(url_for('admin_dashboard'))
 
 
