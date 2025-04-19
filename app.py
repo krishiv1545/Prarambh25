@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-from models import db, User
+from models import db, User, KillSwitch
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 from datetime import datetime, UTC
 import os
+from sqlalchemy.exc import IntegrityError
 
 
 load_dotenv()
@@ -22,18 +23,41 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 db.init_app(app)
 
 with app.app_context():
-
     db.create_all()
 
-    new_user = User(
-        enrollmentno='231260107032',
-        username=os.getenv('ADMIN_USERNAME'),
-        password=generate_password_hash(os.getenv('ADMIN_PASSWORD')),
-        role='admin',
-        datetime=datetime.now(UTC)
-    )
-    db.session.add(new_user)
-    db.session.commit()
+    # Check if admin exists first
+    admin_username = os.getenv('ADMIN_USERNAME')
+    if not User.query.filter_by(username=admin_username).first():
+        try:
+            new_user = User(
+                enrollmentno='231260107032',
+                username=admin_username,
+                password=generate_password_hash(os.getenv('ADMIN_PASSWORD')),
+                role='admin',
+                datetime=datetime.now(UTC)  # Fixed UTC reference
+            )
+            db.session.add(new_user)
+            db.session.commit()
+            print("Admin user created.")
+        except IntegrityError:
+            db.session.rollback()
+            print("Admin user already exists")
+    else:
+        print("Admin user already exists")
+
+    # Check if killswitch exists
+    if not KillSwitch.query.first():
+        try:
+            new_killswitch = KillSwitch(
+                round_1=False, round_2=False, round_3=False)
+            db.session.add(new_killswitch)
+            db.session.commit()
+            print("Killswitch initialized.")
+        except IntegrityError:
+            db.session.rollback()
+            print("Killswitch already exists")
+    else:
+        print("Killswitch already exists")
 
 
 @app.route('/')
@@ -100,6 +124,22 @@ def logout():
     session.pop('user_id', None)
     flash('You have been logged out.', 'success')
     return redirect(url_for('home'))
+
+
+@app.route('/round-1', methods=['GET', 'POST'])
+def round_1():
+    if 'user_id' not in session:
+        flash('Please log in.', 'error')
+        return redirect(url_for('home'))
+
+    status = KillSwitch.query.first()
+    if status.round_1 == True:
+        return render_template('round_1.html')
+    else:
+        flash('Round 1 is not active.', 'error')
+        return redirect(url_for('dashboard'))
+
+    return redirect(url_for('dashboard'))
 
 
 if __name__ == '__main__':
