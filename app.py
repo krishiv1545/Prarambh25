@@ -253,7 +253,6 @@ def add_round2_question():
     return redirect(url_for('admin_dashboard'))
 
 
-<<<<<<< HEAD
 @app.route('/start-round-1', methods=['GET'])
 def start_round_1():
     status = KillSwitch.query.first()
@@ -263,7 +262,7 @@ def start_round_1():
 
     end_round_1_after_delay()
 
-=======
+
 @app.route('/edit-round1-question/<int:question_id>', methods=['POST'])
 def edit_round1_question(question_id):
     question = Round1_Questions.query.get(question_id)
@@ -297,7 +296,6 @@ def edit_round2_question(question_id):
         flash('Question updated successfully.', 'success')
     else:
         flash('Question not found.', 'error')
->>>>>>> 1c5850536c7508c13d256be461bc6f0dd6b3afb7
     return redirect(url_for('admin_dashboard'))
 
 
